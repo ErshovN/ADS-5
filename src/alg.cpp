@@ -78,19 +78,17 @@ int calk(char sum, int x, int y) {
 int eval(std::string pref) {
   // добавьте код
   return 0;
-}
-    TStack <int, 100> stack;
-    int x, y;
-    for (int i = 0; i < pref.size(); i++) {
-        if (preference(pref[i]) < 4) {
-            y = stack.get();
-            stack.pop();
-            x = stack.get();
-            stack.pop();
-            stack.push(calk(pref[i], x, y));
-        } else if (preference(pref[i]) == 4 && pref[i] != ' ') {
-            stack.push(pref[i] - '0');
-        }
+  TStack <int, 100> stack;
+  int x, y;
+  for (int i = 0; i < pref.size(); i++) {
+    if (preference(pref[i]) < 4) {
+      y = stack.get();
+      stack.pop();
+      x = stack.get();
+      stack.pop();
+      stack.push(calk(pref[i], x, y));
+    } else if (preference(pref[i]) == 4 && pref[i] != ' ') {
+      stack.push(pref[i] - '0');
     }
     return stack.get();
 }
