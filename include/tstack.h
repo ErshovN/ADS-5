@@ -5,10 +5,11 @@
 template<typename T, int size>
 class TStack {
   // добавьте код стека
-private:
+ private:
   T arr[100];
   int top;
-public:
+  
+ public:
   TStack():top(-1) {}
   bool isEmpty() {
     return top == -1;
