@@ -3,109 +3,112 @@
 #include <map>
 #include "tstack.h"
 
-int prior(char c) {
-    if (c == '(') {
+int priory(char sym_oper) {
+    if ('(' == sym_oper) {
         return 0;
-    }
-    if (c == ')') {
+    } else if (')' == sym_oper) {
         return 1;
-    }
-    if (c == '+') {
+    } else if ('+' == sym_oper || '-' == sym_oper) {
         return 2;
-    }
-    if (c == '-') {
-        return 2;
-    }
-    if (c == '*') {
+    } else if ('*' == sym_oper || '/' == sym_oper) {
         return 3;
-    }
-    if (c == '/') {
-        return 3;
-    }
-    if (c == ' ') {
+    } else if (' ' == sym_oper) {
         return 4;
     } else {
-    return -1;
+        return 5;
     }
 }
 
 std::string infx2pstfx(std::string inf) {
   // добавьте код
   return std::string("");
-    std::string post;
-    TStack <char, 100> stack1;
-for (int i = 0; i < inf.size(); i++) {
-    if (prior(inf[i]) == -1) {
-        post.push_back(inf[i]);
-        post.push_back(' ');
-    } else {
-      if (prior(inf[i]) == 0) {
-        stack1.push(inf[i]);
-      } else if (stack1.isEmpty()) {
-        stack1.push(inf[i]);
-      } else if ((prior(inf[i]) > prior(stack1.get()))) {
-        stack1.push(inf[i]);
-      } else if (prior(inf[i]) == 1) {
-        while (prior(stack1.get()) != 0) {
-          post.push_back(stack1.get());
-          post.push_back(' ');
-          stack1.pop();
-        }
-            stack1.pop();
-        } else {
-            while (!stack1.isEmpty() && prior(inf[i]) <= prior(stack1.get())) {
-                post.push_back(stack1.get());
-                post.push_back(' ');
-                stack1.pop();
+  TStack <char, 100> stack;
+    std::string out;
+    int i = 0;
+    for (; i < inf.length(); i++) {
+        if (5 == priory(inf[i])) {
+            out += inf[i];
+            while (5 == priory(inf[i+1]) && (i+1) < inf.length()) {
+                out += inf[i+1];
+                i += 1;
             }
-            stack1.push(inf[i]);
+            out += ' ';
+        } else {
+            if (0 == priory(inf[i])) {
+                stack.push(inf[i]);
+            } else if (priory(inf[i]) > priory(stack.get())) {
+                stack.push(inf[i]);
+            } else if (stack.isEmpty()) {
+                stack.push(inf[i]);
+            } else if (1 == priory(inf[i])) {
+                while (0 != priory(stack.get())) {
+                    out += stack.get();
+                    out += ' ';
+                    stack.pop();
+                }
+                stack.pop();
+            } else if (priory(inf[i]) <= priory(stack.get())) {
+                while (!stack.isEmpty() && 1 < priory(stack.get())) {
+                    out += stack.get();
+                    out += ' ';
+                    stack.pop();
+                }
+                stack.push(inf[i]);
+            }
         }
     }
-}
-while (!stack1.isEmpty()) {
-    post.push_back(stack1.get());
-    post.push_back(' ');
-    stack1.pop();
-}
-for (int i = 0; i < post.size(); i++) {
-    if (post[post.size() - 1] == ' ')
-      post.erase(post.size() - 1);
-  }
-  return post;
+    while (!stack.isEmpty()) {
+        out += stack.get();
+        out += ' ';
+        stack.pop();
+    }
+    out.pop_back();
+    return out;
 }
 
-int calcul(char c, int b, int a) {
-    if ('+' == c) {
-        return a + b;
-    }
-    if ('-' == c) {
-        return a - b;
-    }
-    if ('*' == c) {
-        return a * b;
-    }
-    if ('/' == c && b != 0) {
-        return a / b;
-    } else {
-    return 0;
-    }
-}
-
-int eval(std::string pref) {
+std::string infx2pstfx(std::string inf) {
   // добавьте код
-  return 0;
-TStack <int, 100> stack2;
-  for (int i = 0; i < pref.size(); i++) {
-    if (prior(pref[i]) == -1) {
-      stack2.push(pref[i] - '0');
-    } else if (prior(pref[i]) <= 3) {
-      int b = stack2.get();
-      stack2.pop();
-      int a = stack2.get();
-      stack2.pop();
-      stack2.push(calcul(pref[i], b, a));
+  return std::string("");
+  TStack <char, 100> stack;
+    std::string out;
+    int i = 0;
+    for (; i < inf.length(); i++) {
+        if (5 == priory(inf[i])) {
+            out += inf[i];
+            while (5 == priory(inf[i+1]) && (i+1) < inf.length()) {
+                out += inf[i+1];
+                i += 1;
+            }
+            out += ' ';
+        } else {
+            if (0 == priory(inf[i])) {
+                stack.push(inf[i]);
+            } else if (priory(inf[i]) > priory(stack.get())) {
+                stack.push(inf[i]);
+            } else if (stack.isEmpty()) {
+                stack.push(inf[i]);
+            } else if (1 == priory(inf[i])) {
+                while (0 != priory(stack.get())) {
+                    out += stack.get();
+                    out += ' ';
+                    stack.pop();
+                }
+                stack.pop();
+            } else if (priory(inf[i]) <= priory(stack.get())) {
+                while (!stack.isEmpty() && 1 < priory(stack.get())) {
+                    out += stack.get();
+                    out += ' ';
+                    stack.pop();
+                }
+                stack.push(inf[i]);
+            }
+        }
     }
-  }
-  int zn = stack2.get();
-  return zn;
+    while (!stack.isEmpty()) {
+        out += stack.get();
+        out += ' ';
+        stack.pop();
+    }
+    out.pop_back();
+    return out;
 }
