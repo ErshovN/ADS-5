@@ -90,5 +90,4 @@ int eval(std::string pref) {
     } else if (preference(pref[i]) == 4 && pref[i] != ' ') {
       stack.push(pref[i] - '0');
     }
-    return stack.get();
-}
+    return stack.get(); }
