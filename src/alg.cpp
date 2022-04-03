@@ -92,5 +92,5 @@ int eval(std::string pref) {
             stack.push(pref[i] - '0');
         }
     }
-    return stack.get(); 
+    return stack.get();
 }
