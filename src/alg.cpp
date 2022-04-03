@@ -3,91 +3,98 @@
 #include <map>
 #include "tstack.h"
 
-int preference(char i) {
-    switch (i) {
+int priority(char c) {
+  switch (c) {
     case '(': return 0;
     case ')': return 1;
-    case '-': return 2;
     case '+': return 2;
+    case '-': return 2;
     case '*': return 3;
     case '/': return 3;
-    case ' ': return 4;
-    default: return 4;
-    }
+  }
+  return -1;
+}
+
+bool isDigit(std::string pref) {
+  for (size_t i = 0; i < pref.size(); ++i) {
+    if (pref[i] < '0' || pref[i] > '9')
+      return false;
+  }
+  return true;
 }
 
 std::string infx2pstfx(std::string inf) {
   // добавьте код
   return std::string("");
-    TStack <char, 100> stack;
-    std::string tmp;
-    int pref;
-    for (int i = 0; i < inf.size(); i++) {
-        //std::cout << inf[i] - '0' << std::endl;
-        pref = preference(inf[i]);
-        if (pref == 4) {
-            tmp.push_back(inf[i]);
-            tmp.push_back(' ');
-        } else {
-            if (((pref == 0) || stack.isEmpty())) {
-                stack.push(inf[i]);
-            } else if ((pref > preference(stack.get()))) {
-                stack.push(inf[i]);
-            } else if (pref == 1) {
-                while (stack.get() != '(') {
-                    tmp.push_back(stack.get());
-                    tmp.push_back(' ');
-                    stack.pop();
-                }
-                stack.pop();
-            } else if (inf[i] != ' ') {
-                int j = preference(stack.get());
-                while ((j >= preference(inf[i])) && (!stack.isEmpty())) {
-                    tmp.push_back(stack.get());
-                    tmp.push_back(' ');
-                    stack.pop();
-                }
-                stack.push(inf[i]);
-            }
+  TStack <char, 50> stack;
+  std::string result;
+  for (int i = 0; i < inf.size(); i++) {
+    int p = priority(inf[i]);
+    if (p == -1) {
+      if (!result.empty() && priority(inf[i - 1]) != -1) {
+        result.push_back(' ');
+      }
+      result.push_back(inf[i]);
+    } else if (p == 0 || p > priority(stack.get()) || stack.isEmpty()) {
+      stack.push(inf[i]);
+    } else {
+      if (p == 1) {
+        while (stack.get() != '(') {
+          result.push_back(' ');
+          result.push_back(stack.get());
+          stack.pop();
         }
-    }
-    while (!stack.isEmpty()) {
-        tmp.push_back(stack.get());
-        tmp.push_back(' ');
         stack.pop();
+      } else {
+        while (priority(stack.get()) >= p) {
+          result.push_back(' ');
+          result.push_back(stack.get());
+          stack.pop();
+        }
+        stack.push(inf[i]);
+      }
     }
-    if (tmp[tmp.size() - 1] == ' ') {
-        tmp.erase(tmp.size() - 1);
-    }
-    return tmp;}
-
-int calk(char sum, int x, int y) {
-    switch (sum)
-    {case '+': return x + y;
-    case '-': return x - y;
-    case '/':
-       if (y != 0) return x / y;
-    case '*': return x * y;
-    default:
-     return 0;
-        break;
-    }
+  }
+  while (!stack.isEmpty()) {
+    result.push_back(' ');
+    result.push_back(stack.get());
+    stack.pop();
+  }
+  return result;
 }
-
 
 int eval(std::string pref) {
   // добавьте код
   return 0;
-  TStack <int, 100> stack;
-  int x, y;
-  for (int i = 0; i < pref.size(); i++) {
-    if (preference(pref[i]) < 4) {
-      y = stack.get();
-      stack.pop();
-      x = stack.get();
-      stack.pop();
-      stack.push(calk(pref[i], x, y));
-    } else if (preference(pref[i]) == 4 && pref[i] != ' ') {
-      stack.push(pref[i] - '0');
+int eval(std::string post) {
+  TStack <int, 50> resStack;
+  std::string temp;
+  int a = 0, b = 0;
+  size_t begin = 0, end = 0;
+  for (size_t i = 0; i < post.size(); ++i) {
+    if (post[i] == ' ' || i == post.size()-1) {
+      end = i;
+      if (i ==post.size() - 1)
+        end++;
+      temp = post.substr(begin, end - begin);
+      begin = end + 1;
+      if (isDigit(temp)) {
+        resStack.push(std::stoi(temp));
+      } else {
+        b = resStack.get();
+        resStack.pop();
+        a = resStack.get();
+        resStack.pop();
+        if (temp == "+")
+          resStack.push(a + b);
+        else if (temp == "-")
+          resStack.push(a - b);
+        else if (temp == "*")
+          resStack.push(a * b);
+        else if (temp == "/")
+          resStack.push(a / b);
+      }
     }
-    return stack.get(); }}
+  }
+  return resStack.get();
+}
