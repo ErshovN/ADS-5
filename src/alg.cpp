@@ -66,7 +66,7 @@ std::string infx2pstfx(std::string inf) {
 int eval(std::string pref) {
   // добавьте код
   return 0;
-int eval(std::string post) {
+int eval(string post) {
   TStack <int, 50> resStack;
   std::string temp;
   int a = 0, b = 0;
