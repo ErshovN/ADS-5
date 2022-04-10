@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include "tstack.h"
+
 int priority(char c) {
   switch (c) {
     case '(': return 0;
@@ -13,6 +14,7 @@ int priority(char c) {
   }
   return -1;
 }
+
 bool isDigit(std::string pref) {
   for (size_t i = 0; i < pref.size(); ++i) {
     if (pref[i] < '0' || pref[i] > '9')
@@ -27,7 +29,37 @@ std::string infx2pstfx(std::string inf) {
   TStack <char, 50> stack;
   std::string result;
   for (int i = 0; i < inf.size(); i++) {
-@@ -63,9 +61,6 @@ std::string infx2pstfx(std::string inf) {
+    int p = priority(inf[i]);
+    if (p == -1) {
+      if (!result.empty() && priority(inf[i - 1]) != -1) {
+        result.push_back(' ');
+      }
+      result.push_back(inf[i]);
+    } else if (p == 0 || p > priority(stack.get()) || stack.isEmpty()) {
+      stack.push(inf[i]);
+    } else {
+      if (p == 1) {
+        while (stack.get() != '(') {
+          result.push_back(' ');
+          result.push_back(stack.get());
+          stack.pop();
+        }
+        stack.pop();
+      } else {
+        while (priority(stack.get()) >= p) {
+          result.push_back(' ');
+          result.push_back(stack.get());
+          stack.pop();
+        }
+        stack.push(inf[i]);
+      }
+    }
+  }
+  while (!stack.isEmpty()) {
+    result.push_back(' ');
+    result.push_back(stack.get());
+    stack.pop();
+  }
   return result;
 }
 
