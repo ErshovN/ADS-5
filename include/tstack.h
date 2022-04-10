@@ -1,100 +1,26 @@
 // Copyright 2021 NNTU-CS
-#include <string>
-#include <map>
-#include "tstack.h"
+#ifndef INCLUDE_TSTACK_H_
+#define INCLUDE_TSTACK_H_
 
-int priority(char c) {
-  switch (c) {
-    case '(': return 0;
-    case ')': return 1;
-    case '+': return 2;
-    case '-': return 2;
-    case '*': return 3;
-    case '/': return 3;
-  }
-  return -1;
-}
+template<typename T, int size>
+class TStack {
 
-bool isDigit(std::string pref) {
-  for (size_t i = 0; i < pref.size(); ++i) {
-    if (pref[i] < '0' || pref[i] > '9')
-      return false;
-  }
-  return true;
-}
-
-std::string infx2pstfx(std::string inf) {
-  // добавьте код
-  return std::string("");
-  TStack <char, 50> stack;
-  std::string result;
-  for (int i = 0; i < inf.size(); i++) {
-    int p = priority(inf[i]);
-    if (p == -1) {
-      if (!result.empty() && priority(inf[i - 1]) != -1) {
-        result.push_back(' ');
-      }
-      result.push_back(inf[i]);
-    } else if (p == 0 || p > priority(stack.get()) || stack.isEmpty()) {
-      stack.push(inf[i]);
-    } else {
-      if (p == 1) {
-        while (stack.get() != '(') {
-          result.push_back(' ');
-          result.push_back(stack.get());
-          stack.pop();
-        }
-        stack.pop();
-      } else {
-        while (priority(stack.get()) >= p) {
-          result.push_back(' ');
-          result.push_back(stack.get());
-          stack.pop();
-        }
-        stack.push(inf[i]);
-      }
+ private:
+    T arr[100];
+    int top;
+ public:
+    TStack(): top(-1) {}
+    bool isEmpty() { return top == -1; }
+    bool isFull() { return top == size-1; }
+    T get() { return arr[top]; }
+    void pop() {
+        if (!isEmpty()) --top;
     }
-  }
-  while (!stack.isEmpty()) {
-    result.push_back(' ');
-    result.push_back(stack.get());
-    stack.pop();
-  }
-  return result;
-}
-
-int eval(std::string pref) {
-  // добавьте код
-  return 0;
-int eval(std::string post) {
-  TStack <int, 50> resStack;
-  std::string temp;
-  int a = 0, b = 0;
-  size_t begin = 0, end = 0;
-  for (size_t i = 0; i < post.size(); ++i) {
-    if (post[i] == ' ' || i == post.size()-1) {
-      end = i;
-      if (i ==post.size() - 1)
-        end++;
-      temp = post.substr(begin, end - begin);
-      begin = end + 1;
-      if (isDigit(temp)) {
-        resStack.push(std::stoi(temp));
-      } else {
-        b = resStack.get();
-        resStack.pop();
-        a = resStack.get();
-        resStack.pop();
-        if (temp == "+")
-          resStack.push(a + b);
-        else if (temp == "-")
-          resStack.push(a - b);
-        else if (temp == "*")
-          resStack.push(a * b);
-        else if (temp == "/")
-          resStack.push(a / b);
-      }
+    void push(T value) {
+        if (isFull())
+           throw "full!";
+        else
+           arr[++top] = value;
     }
-  }
-  return resStack.get();
-}
+};
+#endif  // INCLUDE_TSTACK_H_
