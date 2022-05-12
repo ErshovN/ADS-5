@@ -72,7 +72,7 @@ int calk(char sum, int x, int y) {
     }
 }
 
-int eval(std::string post) {
+int eval(std::string pref) {
   TStack <int, 100> stack;
     int x, y;
     for (int i = 0; i < pref.size(); i++) {
